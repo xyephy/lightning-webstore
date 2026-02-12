@@ -81,7 +81,7 @@ def checkout(product_id):
         result = lnd.add_invoice(amount=product["price"], memo=memo)
 
         payment_request = result["payment_request"]
-        r_hash = result["r_hash"]
+        r_hash = base64.b64decode(result["r_hash"]).hex()
 
         # Generate QR code
         qr_base64 = generate_qr_base64(payment_request.upper())
