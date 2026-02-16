@@ -1,44 +1,22 @@
-[
-    {
-        "id": "coffee",
-        "name": "Lightning Coffee",
-        "description": "Premium Kenyan coffee, paid instantly over Lightning",
-        "price": 5000,
-        "emoji": "&#9749;"
-    },
-    {
-        "id": "sticker",
-        "name": "Bitcoin Sticker Pack",
-        "description": "5 high-quality Bitcoin and Lightning stickers",
-        "price": 2000,
-        "emoji": "&#127912;"
-    },
-    {
-        "id": "ebook",
-        "name": "Mastering Lightning",
-        "description": "Digital copy - instant delivery after payment",
-        "price": 25000,
-        "emoji": "&#128214;"
-    },
-    {
-        "id": "tshirt",
-        "name": "Lightning Node Runner Tee",
-        "description": "Black t-shirt with Lightning bolt design",
-        "price": 50000,
-        "emoji": "&#128085;"
-    },
-    {
-        "id": "workshop",
-        "name": "1-on-1 Bitcoin Workshop",
-        "description": "30 minute private Bitcoin tutoring session",
-        "price": 100000,
-        "emoji": "&#127891;"
-    },
-    {
-        "id": "donation",
-        "name": "Support the Bootcamp",
-        "description": "Help fund future Bitcoin bootcamps in Africa",
-        "price": 10000,
-        "emoji": "&#10084;"
-    }
-]
+ ,
+{
+    "id": "beer",
+    "name": " Beer",
+    "description": "Crafted local beer, paid instantly via Lightning",
+    "price": 7000,
+    "emoji": "&#127866;"
+},
+{
+    "id": "extra_classes",
+    "name": "Extra Bitcoin Classes",
+    "description": "Additional 1-hour group classes to level up your Lightning skills",
+    "price": 30000,
+    "emoji": "&#127891;"
+},
+{
+    "id": "personal_trainer",
+    "name": "1-on-1 Personal Bitcoin Trainer",
+    "description": "Private session with a Bitcoin expert to master Lightning network",
+    "price": 120000,
+    "emoji": "&#128104;&#8205;&#127891;"
+}
