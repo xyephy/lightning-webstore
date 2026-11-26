@@ -10,8 +10,26 @@ Usage:
     lnd_dir, rest_host = auto_detect("bob")
 """
 
+import glob
 import json
 import os
+import re
+
+
+def _win_to_wsl(path):
+    """Translate a Windows drive path to /mnt/<drive>/ when running in WSL."""
+    m = re.match(r"^([A-Za-z]):[\\/](.*)$", path)
+    if m:
+        return "/mnt/" + m.group(1).lower() + "/" + m.group(2).replace("\\", "/")
+    return path
+
+
+def _networks_files():
+    """All places Polar's networks.json can live. On WSL, Polar is a
+    Windows app, so its data sits under /mnt/c/Users/<name>/.polar."""
+    files = [os.path.expanduser("~/.polar/networks/networks.json")]
+    files += sorted(glob.glob("/mnt/c/Users/*/.polar/networks/networks.json"))
+    return [f for f in files if os.path.exists(f)]
 
 
 POLAR_NETWORKS_FILE = os.path.expanduser(
@@ -34,13 +52,17 @@ def find_polar_node(node_name="bob"):
         dict with keys: name, lnd_dir, rest_host, rest_port, network_name
         None if no matching node found
     """
-    if not os.path.exists(POLAR_NETWORKS_FILE):
-        return None
-
-    try:
-        with open(POLAR_NETWORKS_FILE) as f:
-            data = json.load(f)
-    except (json.JSONDecodeError, IOError):
+    data = None
+    networks_file = None
+    for candidate in _networks_files():
+        try:
+            with open(candidate) as f:
+                data = json.load(f)
+            networks_file = candidate
+            break
+        except (json.JSONDecodeError, IOError):
+            continue
+    if data is None:
         return None
 
     networks = data.get("networks", [])
@@ -50,7 +72,9 @@ def find_polar_node(node_name="bob"):
     # Sort: running networks first (status == Started), then by ID descending
     def sort_key(net):
         status = net.get("status", "")
-        is_running = 1 if status == "Started" else 0
+        # Polar saves status as a number (1 = Started); accept the
+        # string form too in case older versions wrote it that way.
+        is_running = 1 if status in (1, "Started") else 0
         net_id = int(net.get("id", 0))
         return (is_running, net_id)
 
@@ -70,12 +94,11 @@ def find_polar_node(node_name="bob"):
                 continue
 
             # Build the LND directory path
-            network_path = network.get("path", "")
-            if not network_path:
+            network_path = _win_to_wsl(network.get("path", ""))
+            if not network_path or not os.path.isdir(network_path):
                 net_id = network.get("id", "")
-                network_path = os.path.expanduser(
-                    f"~/.polar/networks/{net_id}"
-                )
+                base = os.path.dirname(networks_file)
+                network_path = os.path.join(base, str(net_id))
 
             lnd_dir = os.path.join(
                 network_path, "volumes", "lnd", name
